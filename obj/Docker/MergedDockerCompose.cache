@@ -1,0 +1,28 @@
+services:
+  ProductsDB:
+    environment:
+      MSSQL_TCP_PORT: '1433'
+    expose:
+    - '1433'
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+    - published: 1433
+      target: 1433
+  productmicroservice:
+    build:
+      context: C:\Users\nobin\Desktop\ItlizeTraining\.NetCore\ProductMicroservice
+      dockerfile: ProductMicroservice/Dockerfile
+    depends_on:
+      ProductsDB:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:443;http://+:80
+    image: productmicroservice
+    ports:
+    - target: 80
+    - target: 443
+    volumes:
+    - C:\Users\nobin\AppData\Roaming\ASP.NET\Https:/root/.aspnet/https:ro
+    - C:\Users\nobin\AppData\Roaming\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
+version: '3.4'
